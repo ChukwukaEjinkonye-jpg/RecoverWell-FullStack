@@ -10,16 +10,25 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Widget } from "@uploadcare/react-widget";
 import API_KEYS from "../../config";
+import MessageDialog from "./MessageDialog";
 
-export default function CreateEvent({ onSubmit }) {
+export default function CreateEvent({ onSubmit, isLoggedIn }) {
   const [open, setOpen] = useState(false);
-  const openDrawer = () => setOpen(true);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+
+  const openDrawer = () => {
+    if (!isLoggedIn) {
+      setShowErrorDialog(true);
+    } else {
+      setOpen(true);
+    }
+  };
   const closeDrawer = () => setOpen(false);
   const widgetApi = useRef();
   const [uploadedImage, setUploadedImage] = useState(null);
 
   const handleRenderImage = (fileInfo) => {
-    const croppedImageUrl = `${fileInfo.cdnUrl}-/scale_crop/370x209/smart/`;
+    const croppedImageUrl = `${fileInfo.cdnUrl}-/scale_crop/370x210/center/-/enhance/`;
     setUploadedImage(croppedImageUrl);
   };
 
@@ -39,7 +48,7 @@ export default function CreateEvent({ onSubmit }) {
           className="flex flex-col gap-6 p-4"
           onSubmit={(e) => {
             e.preventDefault();
-            onSubmit(e, uploadedImage);
+            onSubmit(e, uploadedImage, closeDrawer);
           }}
         >
           <Input type="text" label="Name" id="eventName" required />
@@ -108,20 +117,28 @@ export default function CreateEvent({ onSubmit }) {
           <>
             <Button onClick={() => widgetApi.current.openDialog()}>
               Upload Image
+              <Widget
+                ref={widgetApi}
+                publicKey={
+                  API_KEYS.UPLOADCARE_API_KEY || "Your_Uploadcare_Public_Key"
+                }
+                onChange={handleRenderImage}
+              />
             </Button>
-            <Widget
-              ref={widgetApi}
-              publicKey={
-                API_KEYS.UPLOADCARE_API_KEY || "Your_Uploadcare_Public_Key"
-              }
-              onChange={handleRenderImage}
-            />
+
             <Button size="md" type="submit">
               Create Event
             </Button>
           </>
         </form>
       </Drawer>
+      {showErrorDialog && (
+        <MessageDialog
+          message="You must be logged in to create an event"
+          setMessage={() => setShowErrorDialog(false)}
+          title="Authentication Required"
+        />
+      )}
     </>
   );
 }

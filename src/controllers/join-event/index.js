@@ -1,11 +1,17 @@
-const createJoinEvent = require("./create")
-const deleteJoinEvent = require("./delete")
-const {listAllJoinedEvents , listJoinedEventsByUserId, listJoinedEventsbyEventId} = require("./list")
+const createJoinEvent = require("./create");
+const deleteJoinEvent = require("./delete");
+const checkForJoinedEvent = require("./check-joined-event");
+const {
+  listAllJoinedEvents,
+  listJoinedEventsByUserId,
+  listJoinedEventsByEventId,
+} = require("./list");
 
 module.exports = {
-  createJoinEvent, 
-  deleteJoinEvent, 
-  listAllJoinedEvents, 
-  listJoinedEventsByUserId, 
-  listJoinedEventsbyEventId
-}
+  createJoinEvent,
+  deleteJoinEvent,
+  listAllJoinedEvents,
+  listJoinedEventsByUserId,
+  listJoinedEventsByEventId,
+  checkForJoinedEvent,
+};

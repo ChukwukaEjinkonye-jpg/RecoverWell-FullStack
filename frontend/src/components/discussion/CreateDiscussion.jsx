@@ -11,7 +11,6 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 
 export default function CreateDiscussion({
   onSubmit,
-  error,
   setError,
   open,
   setOpen,

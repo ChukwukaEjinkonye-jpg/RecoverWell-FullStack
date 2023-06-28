@@ -1,16 +1,11 @@
+import LandingPage from "../components/landingpagecomponents/LandingPage";
 
-import Header from "../landingpagecomponents/Header";
-import Main from '../landingpagecomponents/Main';
-import Footer from '../landingpagecomponents/Footer'
 export default function Home() {
   return (
     <>
-    <div className="text-white bg-black">
-     
-      
-      <Main />
-      <Footer />
-    </div>
-  </>
+      <div className="text-white bg-palette-default">
+        <LandingPage />
+      </div>
+    </>
   );
 }

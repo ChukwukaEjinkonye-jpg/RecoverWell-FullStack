@@ -22,15 +22,16 @@ module.exports = {
     'react/prop-types': 'off',
     'no-console': 'off',
     'object-curly-newline': 'off',
+    'comma-dangle': 'off',
     'no-plusplus': 'off',
     'no-promise-executor-return': 'off',
     'func-style': 2,
     quotes: 'off',
-    // 'consistent-return': 'off',
+    'consistent-return': 'off',
     'no-alert': 'off',
     camelcase: 'off',
-    'consistent-return': 'off',
     'no-unused-expressions': ["error", { allowTernary: true }],
     'no-unused-vars': ['error', { argsIgnorePattern: '_|(knex)', destructuredArrayIgnorePattern: '^_' }],
+    'no-mixed-operators': 'off', // Turn off the "Expected no linebreak before this expression" rule
   },
 };

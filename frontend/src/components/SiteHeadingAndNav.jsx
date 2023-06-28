@@ -15,41 +15,33 @@ import {
 } from "@material-tailwind/react";
 
 import {
+  HomeIcon,
   CubeTransparentIcon,
   UserCircleIcon,
-  CodeBracketSquareIcon,
   Square3Stack3DIcon,
   ChevronDownIcon,
   Cog6ToothIcon,
-  InboxArrowDownIcon,
-  LifebuoyIcon,
   PowerIcon,
   Bars2Icon,
 } from "@heroicons/react/24/outline";
 
+import { AvatarContext } from "../contexts/AvatarContext";
 import CurrentUserContext from "../contexts/current-user-context";
+import LoginTest from "../pages/LoginDialog.jsx";
 
 // profile menu component
 const profileMenuItems = [
   {
     label: "My Profile",
     icon: UserCircleIcon,
-    to: "/profile",
+    to: "/profile/",
+    action: "profile",
   },
   {
     label: "Edit Avatar",
     icon: Cog6ToothIcon,
     to: "/profile-pic/",
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-    to: "/inbox",
-  },
-  {
-    label: "Help",
-    icon: LifebuoyIcon,
-    to: "/help",
+    action: "editAvatar",
   },
   {
     label: "Sign Out",
@@ -59,6 +51,7 @@ const profileMenuItems = [
 ];
 
 const ProfileMenu = (props) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => {
@@ -67,7 +60,11 @@ const ProfileMenu = (props) => {
 
   const handleMenuAction = (action) => {
     if (action === "signOut") {
-      props.signOut(); // Call the signOut function passed as a prop
+      props.signOut();
+    } else if (action === "editAvatar") {
+      navigate(`/profile-pic/${props.currentUserId}`);
+    } else if (action === "profile") {
+      navigate(`/users/${props.currentUserId}`);
     }
     closeMenu();
   };
@@ -96,7 +93,7 @@ const ProfileMenu = (props) => {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon, to, action }) => {
+        {profileMenuItems.map(({ label, icon, action }) => {
           const isLastItem = action === "signOut";
           return (
             <MenuItem
@@ -132,12 +129,12 @@ const ProfileMenu = (props) => {
 const navListItems = [
   {
     label: "Home",
-    icon: Square3Stack3DIcon,
+    icon: HomeIcon,
     to: "/",
   },
   {
     label: "Events",
-    icon: UserCircleIcon,
+    icon: Square3Stack3DIcon,
     to: "/events",
   },
   {
@@ -147,7 +144,7 @@ const navListItems = [
   },
   {
     label: "Community",
-    icon: CodeBracketSquareIcon,
+    icon: UserCircleIcon,
     to: "/community",
   },
 ];
@@ -174,12 +171,11 @@ const NavList = () => (
 
 export default function ComplexNavbar() {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
-  const [avatar, setAvatar] = useState(
-    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-  );
+  const { avatar } = useContext(AvatarContext);
 
   useEffect(() => {
     window.addEventListener(
@@ -188,12 +184,6 @@ export default function ComplexNavbar() {
     );
   }, []);
 
-  useEffect(() => {
-    if (currentUser && currentUser.avatar) {
-      setAvatar(currentUser.avatar);
-    }
-  }, [currentUser]);
-
   const handleSignOut = async () => {
     const response = await fetch("/api/logout", {
       method: "DELETE",
@@ -201,23 +191,31 @@ export default function ComplexNavbar() {
     if (response.ok) {
       setCurrentUser(null);
       navigate("/");
+      window.location.reload();
     }
   };
 
   return (
-    <Navbar className="mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6 bg-blue-500">
-      <div className="relative mx-auto flex items-center text-blue-gray-900">
+    <Navbar className="mx-auto max-w-screen-3xl p-2  lg:pl-6 bg-meadowπ">
+      <div className="relative mx-auto flex items-center justify-around text-blue-gray-900">
         <Link to="/" className="mr-4 ml-2 cursor-pointer py-1.5 font-medium">
-          RecoverWell
+          <div className="flex justify-around">
+            <img src="../../assets/new logo.png" alt="logo" className="h-10" />
+            <div className="pt-1 pl-2 text-bold text-2xl">RecoverFresh</div>
+          </div>
         </Link>
         <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block">
           <NavList />
         </div>
         <div className="flex items-center ml-auto mr-4">
           {currentUser ? (
-            <ProfileMenu avatar={avatar} signOut={handleSignOut} />
+            <ProfileMenu
+              avatar={avatar}
+              signOut={handleSignOut}
+              currentUserId={currentUser.id}
+            />
           ) : (
-            <Link to="/login">Log In</Link>
+            <LoginTest open={open} setOpen={setOpen} />
           )}
           <IconButton
             size="sm"
@@ -230,143 +228,9 @@ export default function ComplexNavbar() {
           </IconButton>
         </div>
       </div>
-      <Collapse open={isNavOpen} className="overflow-scroll">
+      <Collapse open={isNavOpen} className="overflow-scroll text-black">
         <NavList />
       </Collapse>
     </Navbar>
   );
 }
-
-// import { useState, useEffect, useContext } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { Link } from "react-router-dom";
-
-// import {
-//   MobileNav,
-//   IconButton,
-//   Navbar,
-// } from "@material-tailwind/react"
-
-// import {
-//   Bars2Icon,
-//   UserCircleIcon,
-//   CodeBracketSquareIcon,
-//   CubeTransparentIcon,
-//   Square3Stack3DIcon,
-// } from "@heroicons/react/24/outline";
-
-// import { CurrentUserContext } from "../contexts/current-user-context";
-// import NavList from "./navbar/NavList.jsx";
-// import ProfileMenu from "./navbar/ProfileMenu.jsx";
-
-// export default function ComplexNavbar() {
-//   const [isNavOpen, setIsNavOpen] = useState(false);
-//   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
-//   const navigate = useNavigate();
-//   const { currentUser, setCurrentUser } = useContext(CurrentUserContext);
-//   const [avatar, setAvatar] = useState(
-//     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-//   );
-
-//   useEffect(() => {
-//     window.addEventListener(
-//       "resize",
-//       () => window.innerWidth >= 960 && setIsNavOpen(false)
-//     );
-//   }, []);
-
-//   useEffect(() => {
-//     if (currentUser && currentUser.avatar) {
-//       setAvatar(currentUser.avatar);
-//     }
-//   }, [currentUser]);
-
-//   const handleSignOut = async () => {
-//     const response = await fetch("/api/logout", {
-//       method: "DELETE",
-//     });
-//     if (response.ok) {
-//       setCurrentUser(null);
-//       navigate("/");
-//     }
-//   };
-
-//   return (
-//     <Navbar className="mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6 bg-blue-500">
-//       <div className="relative mx-auto flex items-center text-blue-gray-900">
-//         <Link to="/" className="mr-4 ml-2 cursor-pointer py-1.5 font-medium">
-//           RecoverWell
-//         </Link>
-//         <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block">
-//           <NavList />
-//         </div>
-//         <div className="flex items-center ml-auto mr-4">
-//           {currentUser ? (
-//             <ProfileMenu avatar={avatar} signOut={handleSignOut} />
-//           ) : (
-//             <Link to="/login">Log In</Link>
-//           )}
-//           <IconButton
-//             size="sm"
-//             color="blue-gray"
-//             variant="text"
-//             onClick={toggleIsNavOpen}
-//             className="ml-2 lg:hidden"
-//           >
-//             <Bars2Icon className="h-6 w-6" />
-//           </IconButton>
-//         </div>
-//       </div>
-//       <MobileNav open={isNavOpen} className="overflow-scroll">
-//         <NavList />
-//       </MobileNav>
-//     </Navbar>
-//   );
-// }
-
-// import React from "react";
-// import { Link, useNavigate } from "react-router-dom";
-
-// import { Navbar, MobileNav, IconButton } from "@material-tailwind/react";
-
-// import { Bars2Icon } from "@heroicons/react/24/outline";
-// import ProfileMenu from "./navbar/ProfileMenu.jsx";
-// import NavList from "./navbar/NavList.jsx";
-
-// export default function ComplexNavbar({ currentUser, handleSignOut, avatar }) {
-//   const [isNavOpen, setIsNavOpen] = React.useState(false);
-//   const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
-//   const navigate = useNavigate();
-
-//   return (
-//     <Navbar className="mx-auto max-w-screen-xl p-2 lg:rounded-full lg:pl-6 bg-blue-500">
-//       <div className="relative mx-auto flex items-center text-blue-gray-900">
-//         <Link to="/" className="mr-4 ml-2 cursor-pointer py-1.5 font-medium">
-//           RecoverWell
-//         </Link>
-//         <div className="absolute top-2/4 left-2/4 hidden -translate-x-2/4 -translate-y-2/4 lg:block">
-//           <NavList />
-//         </div>
-//         <div className="flex items-center ml-auto mr-4">
-//           {currentUser ? (
-//             <ProfileMenu avatar={avatar} signOut={handleSignOut} />
-//           ) : (
-//             <Link to="/login">Log In</Link>
-//           )}
-//           <IconButton
-//             size="sm"
-//             color="blue-gray"
-//             variant="text"
-//             onClick={toggleIsNavOpen}
-//             className="ml-2 lg:hidden"
-//           >
-//             <Bars2Icon className="h-6 w-6" />
-//           </IconButton>
-//         </div>
-//       </div>
-//       <MobileNav open={isNavOpen} className="overflow-scroll">
-//         <NavList />
-//       </MobileNav>
-//     </Navbar>
-//   );
-// }

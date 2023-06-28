@@ -1,7 +1,12 @@
 const list = require("./list");
 const create = require("./create");
 const show = require("./show");
-const { updateUser, updateProfilePic } = require("./update");
+const {
+  updateUser,
+  updateProfilePic,
+  updateBio,
+  updateFavoriteQuote,
+} = require("./update");
 
 const login = require("./login");
 const logout = require("./logout");
@@ -16,4 +21,6 @@ module.exports = {
   logout,
   showMe,
   updateProfilePic,
+  updateBio,
+  updateFavoriteQuote,
 };
